@@ -47,14 +47,13 @@ class VdsController extends Controller
 
     public function edit($id)
     {
-        $vds = new Vds;
-        if (!$vds->find($id)) {
-            session(['alert' => __('VDS не найдена!'), 'a_status' => 'danger']);
+        $game = new Game;
+        if (!$game->find($id)) {
+            session(['alert' => __('Игра не найдена!'), 'a_status' => 'danger']);
 
-            return redirect()->route('admin.vds');
+            return redirect()->route('admin.games');
         }
-        $locs = new Location;
-        return view('admin.vds.edit', ['vds' => $vds->find($id), 'locs' => $locs->all()]);
+        return view('admin.games.edit', ['game' => $game->find($id)]);
     }
     public function update(Request $request, string $id)
     {

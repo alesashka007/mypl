@@ -8,6 +8,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\VdsController;
+use App\Http\Controllers\GameController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,6 +71,15 @@ Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get("/edit/{id}", [VdsController::class, 'edit'])->name('admin.vds.edit');
         Route::post("/edit/{id}", [VdsController::class, 'update'])->name('admin.vds.update');
         Route::get("/destroy/{id}", [VdsController::class, 'destroy'])->name('admin.vds.destroy');
+    });
+
+    Route::prefix('games')->group(function () {
+        Route::get("/", [GameController::class, 'games'])->name('admin.games');
+        Route::get("/create", [GameController::class, 'create'])->name('admin.games.create');
+        Route::post("/create", [GameController::class, 'store'])->name('admin.games.store');
+        Route::get("/edit/{id}", [GameController::class, 'edit'])->name('admin.games.edit');
+        Route::post("/edit/{id}", [GameController::class, 'update'])->name('admin.games.update');
+        Route::get("/destroy/{id}", [GameController::class, 'destroy'])->name('admin.games.destroy');
     });
 });
 
