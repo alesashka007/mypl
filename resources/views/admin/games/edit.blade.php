@@ -33,8 +33,8 @@
                             <div class="mb-3">
                                 <x-label class="required">{{__('Статус')}}</x-label>
                                 <select class="form-control" name="status">
-                                    <option @if($game->status == 1) selected @endif value="1">{{_('Активная')}}</option>
-                                    <option @if($game->status == 0) selected @endif value="0">{{_('Не активная')}}</option>
+                                    <option @if($game->status == 1) selected @endif value="1">{{__('Активная')}}</option>
+                                    <option @if($game->status == 0) selected @endif value="0">{{__('Не активная')}}</option>
                                 </select>
                             </div>
                             <x-button type="submit" >{{__('Сохранить')}}</x-button>
