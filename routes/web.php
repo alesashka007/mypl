@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\VdsController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\RateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +81,15 @@ Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get("/edit/{id}", [GameController::class, 'edit'])->name('admin.games.edit');
         Route::post("/edit/{id}", [GameController::class, 'update'])->name('admin.games.update');
         Route::get("/destroy/{id}", [GameController::class, 'destroy'])->name('admin.games.destroy');
+    });
+
+    Route::prefix('rates')->group(function () {
+        Route::get("/", [RateController::class, 'rates'])->name('admin.rates');
+        Route::get("/create", [RateController::class, 'create'])->name('admin.rates.create');
+        Route::post("/create", [RateController::class, 'store'])->name('admin.rates.store');
+        Route::get("/edit/{id}", [RateController::class, 'edit'])->name('admin.rates.edit');
+        Route::post("/edit/{id}", [RateController::class, 'update'])->name('admin.rates.update');
+        Route::get("/destroy/{id}", [RateController::class, 'destroy'])->name('admin.rates.destroy');
     });
 });
 

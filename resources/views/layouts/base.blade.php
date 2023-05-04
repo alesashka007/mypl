@@ -13,6 +13,7 @@
 
     body {
         background: url("http://m.gettywallpapers.com/wp-content/uploads/2022/05/Wallpaper-CS-Go.jpg");
+        background-attachment:fixed;
     }
 </style>
 <body>

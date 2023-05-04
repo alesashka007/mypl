@@ -11,10 +11,10 @@
         <thead>
         <tr>
             <th scope="col">#id</th>
+            <th scope="col">{{__('Статус')}}</th>
             <th scope="col">{{__('Локация')}}</th>
             <th scope="col">IP:PORT</th>
             <th scope="col">{{__('Ядер')}}</th>
-            <th scope="col">{{__('Логин').'@'.__('Пароль')}}</th>
             <th scope="col">{{__('Создана')}}</th>
             <th scope="col"></th>
         </tr>
@@ -32,10 +32,10 @@
             @endphp
             <tr>
                 <th scope="row">{{$vd->id}}</th>
+                <td><p class="btn btn-{{$vd_status['status']}}">{{$vd_status['message']}}</p></td>
                 <td>{{$vd->location->name}}</td>
                 <td>{{$vd->ip.':'.$vd->port}}</td>
                 <td>{{$vd->cores}}</td>
-                <td>{{$vd->login.'@'.$vd->password}}</td>
                 <td>
                     {{$vd->created_at}}
                 </td>
