@@ -63,5 +63,15 @@
                 </div>
             </x-card>
         </div>
+        <div class="col-sm-4">
+            <x-card>
+                <div class="card-body">
+                    <h5 class="card-title">{{__('Тарифы')}}</h5>
+                    <p class="card-text">{{__('Всего тарифов') .' (' . modelCount('Rate')}})</p>
+                    <a href="{{route('admin.rates')}}" class="btn btn-primary">{{__('Просмотр')}}</a>
+                    <a href="{{route('admin.rates.create')}}" class="btn btn-primary">{{__('Создать')}}</a>
+                </div>
+            </x-card>
+        </div>
     </div>
 @endsection

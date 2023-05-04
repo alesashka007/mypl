@@ -77,7 +77,7 @@ class GameController extends Controller
         }
 
         $objects = 0;
-// will need        $objects = $objects + modelCountEl("Server", 'game', $id);
+        $objects = $objects + modelCountEl("Rate", 'game', $id);
         if($objects > 0){
             session(['alert' => __('Вы не можете удалить игру так как есть созданые обьекты с привязаным его id!'), 'a_status' => 'danger']);
 
