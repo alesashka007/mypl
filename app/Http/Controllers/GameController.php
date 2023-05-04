@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GameStoreRequest;
 use Illuminate\Http\Request;
 use App\Models\Game;
 use Illuminate\Validation\Rule;
@@ -18,15 +19,11 @@ class GameController extends Controller
     {
         return view('admin.games.create');
     }
-    public function store(Request $request)
+    public function store(GameStoreRequest $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:35'],
-            'code' => ['required', 'string', 'max:8', 'unique:games']
-        ]);
         $game = new Game;
-        $game->name = $validated['name'];
-        $game->code = $validated['code'];
+        $game->name = $request->get('name');
+        $game->code = $request->get('code');
         $game->save();
         session(['alert' => __('Игра успешно создана'), 'a_status' => 'success']);
         return redirect()->route('admin.games');
