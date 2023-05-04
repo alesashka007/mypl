@@ -47,7 +47,7 @@
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <label class="labels">{{__('Email')}}</label>
-                                <x-input disabled value="{{$user->email}}"/>
+                                <x-input name="email" disabled value="{{$user->email}}"/>
                             </div>
                         </div>
                         <div class="row mt-3">
