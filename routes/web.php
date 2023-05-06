@@ -10,6 +10,8 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\VdsController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\RateController;
+use App\Http\Controllers\ServerController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +36,12 @@ Route::get("/logout", function () {
 })->middleware('auth')->name('logout');
 Route::get("/user/profile", [UserController::class, 'profile'])->middleware('auth')->name('profile');
 Route::post("/user/profile/save", [UserController::class, 'save'])->middleware('auth')->name('save_profile');
+
+Route::get('/order', [OrderController::class, 'order'])->name('order');
+Route::get('/order/game/{id}', [OrderController::class, 'game'])->name('order.game');
+Route::post('/order/buy', [OrderController::class, 'buy'])->middleware('auth')->name('order.buy');
+Route::get('/cupon', function (){return '{"sum": 15"}';});
+//Route::get('/order/web/{id}', [OrderController::class, 'web'])->name('order.web');
 
 
 Route::middleware('admin')->prefix('admin')->group(function () {
