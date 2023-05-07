@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GameStoreRequest;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\GameUpdateRequest;
@@ -24,8 +25,10 @@ class GameController extends Controller
     public function store(GameStoreRequest $request)
     {
         $game = new Game;
+        
         $game->name = $request->name;
         $game->code = $request->code;
+
         $game->save();
         session(['alert' => __('Игра успешно создана'), 'a_status' => 'success']);
         return redirect()->route('admin.games');
