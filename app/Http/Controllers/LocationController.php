@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use Illuminate\Http\Request;
+use App\Http\Requests\LocationStoreRequest;
+use App\Http\Requests\LocationUpdateRequest;
 
 class LocationController extends Controller
 {
@@ -25,21 +27,22 @@ class LocationController extends Controller
         }
         return view('admin.location.edit', ['loc' => $loc->find($id)]);
     }
-    public function update(Request $request, string $id)
+    public function update(LocationUpdateRequest $request, string $id)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:40'],
-            'status' => ['required', 'boolean'],
-        ]);
         $loc = new Location;
         if (!$loc->find($id)) {
             session(['alert' => __('Локация не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.location');
         }
+        $valid = $loc->where(['name' => $request->name])->first();
+        if($valid->id != $id){
+            session(['alert' => __('Локация с таким названием уже есть!'), 'a_status' => 'danger']);
+            return back()->withInput();
+        }
         $loc->where(['id' => $id])->update([
-            'name' => $validated['name'],
-            'status' => $validated['status'],
+            'name' => $request->name,
+            'status' => $request->status,
         ]);
         session(['alert' => __('Локация успешно изменена!'), 'a_status' => 'success']);
 
@@ -50,18 +53,15 @@ class LocationController extends Controller
         return view('admin.location.create');
     }
 
-    public function store(Request $request)
+    public function store(LocationStoreRequest $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:40'],
-        ]);
         $loc = new Location;
-        $loc->name = $validated['name'];
+        $loc->name = $request->name;
 
         $loc->save();
         session(['alert' => __('Локация успешно создана!'), 'a_status' => 'success']);
 
-        return redirect()->route('admin.index');
+        return redirect()->route('admin.location');
     }
     public function destroy(string $id)
     {

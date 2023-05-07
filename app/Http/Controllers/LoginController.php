@@ -17,13 +17,9 @@ class LoginController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string', 'min:7']
-        ]);
-        $user = User::where(['email' => $validated['email']])->first();
+        $user = User::where(['email' => $request->email])->first();
         if($user){
-            if(Hash::check($validated['password'], $user['password'])){
+            if(Hash::check($request->password, $user['password'])){
                 Auth::login($user);
                 session(['alert' => __('Вы успешно авторизовались!'), 'a_status' => 'success']);
                 return redirect()->route('home');

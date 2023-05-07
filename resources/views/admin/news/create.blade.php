@@ -4,7 +4,7 @@
 @endsection
 @section('navbar')
     <a class="nav-link" aria-current="page" href="{{route('admin.index')}}">{{__('Админка')}}</a>
-    <a class="nav-link" aria-current="page" href="#{{route('admin.news')}}">{{__('Новости')}}</a>
+    <a class="nav-link" aria-current="page" href="{{route('admin.news')}}">{{__('Новости')}}</a>
     <a class="nav-link disabled" aria-current="page" href="#">{{__('Создание новости')}}</a>
 @endsection
 @section('content')

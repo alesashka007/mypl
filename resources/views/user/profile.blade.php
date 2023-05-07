@@ -26,7 +26,7 @@
                         <div class="row mt-2">
                             <div class="col-md-6">
                                 <label class="labels">{{__('Баланс')}}</label>
-                                <x-input disabled value="{{$user->balance}}"/>
+                                <x-input disabled name="balance" value="{{$user->balance}}"/>
                             </div>
                             <div class="col-md-6">
                                 <label class="labels">&nbsp;</label>
