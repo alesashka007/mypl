@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NewsStoreRequest;
+use App\Http\Requests\NewsUpdateRequest;
 use App\Models\News;
 use Illuminate\Http\Request;
 
@@ -25,15 +27,11 @@ class NewsController extends Controller
         return view('admin.news.create');
     }
 
-    public function store(Request $request)
+    public function store(NewsStoreRequest $request)
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:40'],
-            'text' => ['required', 'string', 'max:1000'],
-        ]);
         $news = new News;
-        $news->title = $validated['title'];
-        $news->text = $validated['text'];
+        $news->title = $request->title;
+        $news->text = $request->text;
         $news->user_id = request()->user()->id;
 
         $news->save();
@@ -53,13 +51,8 @@ class NewsController extends Controller
         return view('admin.news.edit', ['news' => $news->find($id)]);
     }
 
-    public function update(Request $request, string $id)
+    public function update(NewsUpdateRequest $request, string $id)
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:40'],
-            'text' => ['required', 'string', 'max:1000'],
-            'status' => ['required', 'boolean'],
-        ]);
         $news = new News;
         if (!$news->find($id)) {
             session(['alert' => __('Новость не найдена!'), 'a_status' => 'danger']);
@@ -67,9 +60,9 @@ class NewsController extends Controller
             return redirect()->route('admin.news');
         }
         $news->where(['id' => $id])->update([
-            'title' => $validated['title'],
-            'text' => $validated['text'],
-            'status' => $validated['status'],
+            'title' => $request->title,
+            'text' => $request->text,
+            'status' => $request->status,
         ]);
         session(['alert' => __('Новость успешно изменена!'), 'a_status' => 'success']);
 

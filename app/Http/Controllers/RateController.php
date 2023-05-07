@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RateStoreRequest;
+use App\Http\Requests\RateUpdateRequest;
 use App\Models\Game;
 use App\Models\Rate;
 use App\Models\Vds;
@@ -22,36 +24,21 @@ class RateController extends Controller
         return view('admin.rates.create', ['games' => $games->all(), 'vds' => $vds->all()]);
     }
 
-    public function store(Request $request)
+    public function store(RateStoreRequest $request)
     {
-//        dd($request);
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'min_s' => ['required', 'int'],
-            'max_s' => ['required', 'int'],
-            'price' => ['required', 'decimal:2'],
-            'quota' => ['required', 'int'],
-            'tick' => ['int'],
-            'vds_id' => ['required', 'int', 'exists:vds,id'],
-            'game_id' => ['required', 'int', 'exists:games,id'],
-            'addons' => ['required', 'boolean'],
-            'ftp' => ['required', 'boolean'],
-            'fastdl' => ['required', 'boolean'],
-            'tv' => ['required', 'boolean'],
-        ]);
         $rate = new Rate;
-        $rate->name = $validated['name'];
-        $rate->price = $validated['price'];
-        $rate->min_s = $validated['min_s'];
-        $rate->max_s = $validated['max_s'];
-        $rate->quota = $validated['quota'];
-        $rate->tick = $validated['tick'];
-        $rate->vds_id = $validated['vds_id'];
-        $rate->game_id = $validated['game_id'];
-        $rate->addons = $validated['addons'];
-        $rate->ftp = $validated['ftp'];
-        $rate->fastdl = $validated['fastdl'];
-        $rate->tv = $validated['tv'];
+        $rate->name = $request->name;
+        $rate->price = $request->price;
+        $rate->min_s = $request->min_s;
+        $rate->max_s = $request->max_s;
+        $rate->quota = $request->quota;
+        $rate->tick = $request->tick;
+        $rate->vds_id = $request->vds_id;
+        $rate->game_id = $request->game_id;
+        $rate->addons = $request->addons;
+        $rate->ftp = $request->ftp;
+        $rate->fastdl = $request->fastdl;
+        $rate->tv = $request->tv;
 
         $rate->save();
 
@@ -73,7 +60,7 @@ class RateController extends Controller
         return view('admin.rates.edit', ['rate' => $rate->find($id), 'vds' => $vds->all(), 'games' => $games->all()]);
     }
 
-    public function update(Request $request, string $id)
+    public function update(RateUpdateRequest $request, string $id)
     {
         $rate = new Rate;
         if (!$rate->find($id)) {
@@ -81,37 +68,22 @@ class RateController extends Controller
 
             return redirect()->route('admin.rates');
         }
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'min_s' => ['required', 'int'],
-            'max_s' => ['required', 'int'],
-            'price' => ['required', 'decimal:2'],
-            'quota' => ['required', 'int'],
-            'tick' => ['int'],
-            'vds_id' => ['required', 'int', 'exists:vds,id'],
-            'game_id' => ['required', 'int', 'exists:games,id'],
-            'addons' => ['required', 'boolean'],
-            'ftp' => ['required', 'boolean'],
-            'fastdl' => ['required', 'boolean'],
-            'tv' => ['required', 'boolean'],
-            'status' => ['required', 'boolean'],
-        ]);
         // нужно написать остаток кода когда доделаю сервера на проверку подключенных серверу услуг что б небыло
         // что человек включил ftp а потом отключили к нему доступ а ftp остался и остальным дополнениям.
         $rate->where(['id' => $id])->update([
-            'name' => $validated['name'],
-            'price' => $validated['price'],
-            'min_s' => $validated['min_s'],
-            'max_s' => $validated['max_s'],
-            'quota' => $validated['quota'],
-            'tick' => $validated['tick'],
-            'vds_id' => $validated['vds_id'],
-            'game_id' => $validated['game_id'],
-            'addons' => $validated['addons'],
-            'ftp' => $validated['ftp'],
-            'fastdl' => $validated['fastdl'],
-            'tv' => $validated['tv'],
-            'status' => $validated['status'],
+            'name' => $request->name,
+            'price' => $request->price,
+            'min_s' => $request->min_s,
+            'max_s' => $request->max_s,
+            'quota' => $request->quota,
+            'tick' => $request->tick,
+            'vds_id' => $request->vds_id,
+            'game_id' => $request->game_id,
+            'addons' => $request->addons,
+            'ftp' => $request->ftp,
+            'fastdl' => $request->fastdl,
+            'tv' => $request->tv,
+            'status' => $request->status,
         ]);
         session(['alert' => __('Тариф успешно именён!'), 'a_status' => 'success']);
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VdsStoreRequest;
+use App\Http\Requests\VdsUpdateRequest;
 use Illuminate\Http\Request;
 use App\Models\Vds;
 use App\Models\Location;
@@ -21,24 +23,16 @@ class VdsController extends Controller
         return view('admin.vds.create', ['locs' => $locs->all()]);
     }
 
-    public function store(Request $request)
+    public function store(VdsStoreRequest $request)
     {
-        $validated = $request->validate([
-            'login' => ['required', 'string'],
-            'password' => ['required', 'string'],
-            'ip' => ['required', 'string', 'ip', 'unique:vds'],
-            'port' => ['required', 'integer'],
-            'location' => ['required', 'integer'],
-            'cores' => ['required', 'integer']
-        ]);
         $vds = new Vds;
 
-        $vds->login = $validated['login'];
-        $vds->password = $validated['password'];
-        $vds->ip = $validated['ip'];
-        $vds->port = $validated['port'];
-        $vds->location_id = $validated['location'];
-        $vds->cores = $validated['cores'];
+        $vds->login = $request->login;
+        $vds->password = $request->password;
+        $vds->ip = $request->ip;
+        $vds->port = $request->port;
+        $vds->location_id = $request->location;
+        $vds->cores = $request->cores;
 
         $vds->save();
         session(['alert' => __('Вы успешно создали vds!'), 'a_status' => 'success']);
@@ -56,31 +50,28 @@ class VdsController extends Controller
         $locs = new Location;
         return view('admin.vds.edit', ['vds' => $vds->find($id), 'locs' => $locs->all()]);
     }
-    public function update(Request $request, string $id)
+    public function update(VdsUpdateRequest $request, string $id)
     {
-        $validated = $request->validate([
-            'login' => ['required', 'string'],
-            'password' => ['required', 'string'],
-            'ip' => ['required', 'string', 'ip', Rule::unique('vds')->ignore($id)],
-            'port' => ['required', 'integer'],
-            'location' => ['required', 'integer'],
-            'cores' => ['required', 'integer'],
-            'status' => ['required', 'boolean']
-        ]);
         $vds = new Vds;
         if (!$vds->find($id)) {
             session(['alert' => __('VDS не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.vds');
         }
+        $valid = $vds->where(['ip' => $request->ip])->first();
+        if($valid->id != $id){
+            session(['alert' => __('Vds с таким ip уже есть!'), 'a_status' => 'danger']);
+            return back()->withInput();
+        }
+
         $vds->where(['id' => $id])->update([
-            'login' => $validated['login'],
-            'password' => $validated['password'],
-            'ip' => $validated['ip'],
-            'port' => $validated['port'],
-            'location_id' => $validated['location'],
-            'cores' => $validated['cores'],
-            'status' => $validated['status'],
+            'login' => $request->login,
+            'password' => $request->password,
+            'ip' => $request->ip,
+            'port' => $request->port,
+            'location_id' => $request->location,
+            'cores' => $request->cores,
+            'status' => $request->status,
         ]);
         session(['alert' => __('Vds успешно изменена!'), 'a_status' => 'success']);
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserSaveRequest;
+use App\Http\Requests\UserUpdateRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -13,12 +15,8 @@ class UserController extends Controller
         $user = new User;
         return view('user.profile', ['user' => $user->find(request()->user()->id)]);
     }
-    public function save(Request $request)
+    public function save(UserSaveRequest $request)
     {
-        $validated = $request->validate([
-            'firstname' => ['required', 'string', 'max:20'],
-            'lastname' => ['required', 'string', 'max:20']
-        ]);
         $id = request()->user()->id;
         $user = new User;
         if (!$user->find($id)) {
@@ -27,13 +25,12 @@ class UserController extends Controller
             return redirect()->route('home');
         }
         $user->where(['id' => $id])->update([
-            'firstname' => $validated['firstname'],
-            'lastname' => $validated['lastname'],
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
         ]);
 
-        if($request['old_password'] != ''){
-            if(Hash::check($request['old_password'], request()->user()->password)){
-//                dd($request->password . '_______'. $request->password_confirmation);
+        if($request->old_password){
+            if(Hash::check($request->old_password, request()->user()->password)){
                 $validated = $request->validate([
                     'password' => ['required', 'string', 'min:7', 'confirmed']
                 ]);
@@ -64,15 +61,8 @@ class UserController extends Controller
 //        dd($user->find($id));
         return view('admin.users.edit', ['user' => $user->find($id)]);
     }
-    public function update(Request $request, string $id)
+    public function update(UserUpdateRequest $request, string $id)
     {
-        $validated = $request->validate([
-            'firstname' => ['required', 'string', 'max:20'],
-            'lastname' => ['required', 'string', 'max:20'],
-            'email' => ['required', 'string', 'email'],
-            'balance' => ['required', 'decimal:2'],
-            'admin' => ['required', 'boolean'],
-        ]);
         $user = new User;
         if (!$user->find($id)) {
             session(['alert' => __('Пользователь не найден!'), 'a_status' => 'danger']);
@@ -80,11 +70,11 @@ class UserController extends Controller
             return redirect()->route('admin.users');
         }
         $user->where(['id' => $id])->update([
-            'firstname' => $validated['firstname'],
-            'lastname' => $validated['lastname'],
-            'email' => $validated['email'],
-            'balance' => $validated['balance'],
-            'admin' => $validated['admin'],
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'email' => $request->email,
+            'balance' => $request->balance,
+            'admin' => $request->admin,
         ]);
         session(['alert' => __('Пользователь успешно изменен!'), 'a_status' => 'success']);
 

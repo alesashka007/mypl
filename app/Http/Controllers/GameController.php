@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\GameStoreRequest;
 use Illuminate\Http\Request;
+
+use App\Http\Requests\GameUpdateRequest;
+use App\Http\Requests\GameStoreRequest;
+
 use App\Models\Game;
-use Illuminate\Validation\Rule;
 
 class GameController extends Controller
 {
@@ -22,8 +25,10 @@ class GameController extends Controller
     public function store(GameStoreRequest $request)
     {
         $game = new Game;
-        $game->name = $request->get('name');
-        $game->code = $request->get('code');
+        
+        $game->name = $request->name;
+        $game->code = $request->code;
+
         $game->save();
         session(['alert' => __('Игра успешно создана'), 'a_status' => 'success']);
         return redirect()->route('admin.games');
@@ -39,23 +44,23 @@ class GameController extends Controller
         }
         return view('admin.games.edit', ['game' => $game->find($id)]);
     }
-    public function update(Request $request, string $id)
+    public function update(GameUpdateRequest $request, string $id)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:35'],
-            'code' => ['required', 'string', 'max:8', Rule::unique('games')->ignore($id)],
-            'status' => ['required', 'boolean']
-        ]);
         $game = new Game;
         if (!$game->find($id)) {
             session(['alert' => __('Игра не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.games');
         }
+        $valid = $game->where(['code' => $request->code])->first();
+        if($valid->id != $id){
+            session(['alert' => __('Игра с таким кодом уже есть!'), 'a_status' => 'danger']);
+            return back()->withInput();
+        }
         $game->where(['id' => $id])->update([
-            'name' => $validated['name'],
-            'code' => $validated['code'],
-            'status' => $validated['status']
+            'name' => $request->name,
+            'code' => $request->code,
+            'status' => $request->status
         ]);
         session(['alert' => __('Игра успешно изменена!'), 'a_status' => 'success']);
 
