@@ -10,8 +10,8 @@ class GameController extends Controller
 {
     public function games()
     {
-        $game = new Game;
-        return view('admin.games.index', ['games' => $game->all()]);
+        $games = Game::query()->get();
+        return view('admin.games.index', ['games' => $games]);
     }
 
     public function create()
@@ -32,32 +32,30 @@ class GameController extends Controller
 
     public function edit(string $id)
     {
-        $game = new Game;
-        if (!$game->find($id)) {
+        $game = Game::query()->find($id);
+        if (!$game) {
             session(['alert' => __('Игра не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.games');
         }
-        return view('admin.games.edit', ['game' => $game->find($id)]);
+        return view('admin.games.edit', ['game' => $game]);
     }
     public function update(GameUpdateRequest $request, string $id)
     {
-        $game = new Game;
-        if (!$game->find($id)) {
+        $game = Game::query()->find($id);
+
+        if (!$game) {
             session(['alert' => __('Игра не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.games');
         }
-        $valid = $game->where(['code' => $request->code])->first();
-        if($valid->id != $id){
-            session(['alert' => __('Игра с таким кодом уже есть!'), 'a_status' => 'danger']);
-            return back()->withInput();
-        }
-        $game->where(['id' => $id])->update([
+
+        $game->update([
             'name' => $request->name,
             'code' => $request->code,
             'status' => $request->status
         ]);
+
         session(['alert' => __('Игра успешно изменена!'), 'a_status' => 'success']);
 
         return redirect()->route('admin.games');

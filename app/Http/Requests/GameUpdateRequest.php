@@ -26,7 +26,12 @@ class GameUpdateRequest extends FormRequest
 //            dd($this->request);
             [
             'name' => ['required', 'string', 'max:35'],
-            'code' => ['required', 'string', 'max:8'],
+            'code' => [
+                'required',
+                'string',
+                'max:8',
+                Rule::unique('games')->ignore($this->code)
+            ],
             'status' => ['required', 'boolean']
         ];
     }
