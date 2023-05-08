@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class VdsUpdateRequest extends FormRequest
 {
@@ -24,7 +25,12 @@ class VdsUpdateRequest extends FormRequest
         return [
             'login' => ['required', 'string'],
             'password' => ['required', 'string'],
-            'ip' => ['required', 'string', 'ip'],
+            'ip' => [
+                'required',
+                'string',
+                'ip',
+                Rule::unique('vds')->ignore($this->ip)
+            ],
             'port' => ['required', 'integer'],
             'location' => ['required', 'integer'],
             'cores' => ['required', 'integer'],

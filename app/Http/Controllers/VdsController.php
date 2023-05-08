@@ -13,14 +13,14 @@ class VdsController extends Controller
 {
     public function vds()
     {
-        $vds = new Vds;
-        return view('admin.vds.index', ['vds' => $vds->paginate(10)]);
+        $vds = Vds::query()->paginate(10);
+        return view('admin.vds.index', ['vds' => $vds]);
     }
 
     public function create()
     {
-        $locs = new Location;
-        return view('admin.vds.create', ['locs' => $locs->all()]);
+        $locs = Location::query()->get();
+        return view('admin.vds.create', ['locs' => $locs]);
     }
 
     public function store(VdsStoreRequest $request)
@@ -41,30 +41,26 @@ class VdsController extends Controller
 
     public function edit($id)
     {
-        $vds = new Vds;
-        if (!$vds->find($id)) {
+        $vds = Vds::query()->find($id);
+        if (!$vds) {
             session(['alert' => __('VDS не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.vds');
         }
-        $locs = new Location;
-        return view('admin.vds.edit', ['vds' => $vds->find($id), 'locs' => $locs->all()]);
+        $locs = Location::query()->get();
+        return view('admin.vds.edit', ['vds' => $vds, 'locs' => $locs]);
     }
     public function update(VdsUpdateRequest $request, string $id)
     {
-        $vds = new Vds;
-        if (!$vds->find($id)) {
+        $vds = Vds::query()->find($id);
+
+        if (!$vds) {
             session(['alert' => __('VDS не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.vds');
         }
-        $valid = $vds->where(['ip' => $request->ip])->first();
-        if($valid->id != $id){
-            session(['alert' => __('Vds с таким ip уже есть!'), 'a_status' => 'danger']);
-            return back()->withInput();
-        }
 
-        $vds->where(['id' => $id])->update([
+        $vds->update([
             'login' => $request->login,
             'password' => $request->password,
             'ip' => $request->ip,
@@ -80,9 +76,9 @@ class VdsController extends Controller
 
     public function destroy(string $id)
     {
-        $vds = new Vds;
+        $vds = Vds::query()->find($id);
 
-        if(!$vds->find($id)){
+        if(!$vds){
             session(['alert' => __('VDS не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.vds');
@@ -94,7 +90,7 @@ class VdsController extends Controller
 
             return redirect()->route('admin.vsd');
         }
-        $vds->find($id)->delete();
+        $vds->delete();
 
         session(['alert' => __('VDS успешно удалена!'), 'a_status' => 'success']);
 

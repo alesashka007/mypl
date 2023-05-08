@@ -13,15 +13,15 @@ class RateController extends Controller
 {
     public function rates()
     {
-        $rate = new Rate;
-        return view('admin.rates.index', ['rates' => $rate->paginate(10)]);
+        $rates = Rate::query()->paginate(10);
+        return view('admin.rates.index', ['rates' => $rates]);
     }
 
     public function create()
     {
-        $vds = new Vds;
-        $games = new Game;
-        return view('admin.rates.create', ['games' => $games->all(), 'vds' => $vds->all()]);
+        $vds = Vds::query()->get();
+        $games = Game::query()->get();
+        return view('admin.rates.create', ['games' => $games, 'vds' => $vds]);
     }
 
     public function store(RateStoreRequest $request)
@@ -49,28 +49,28 @@ class RateController extends Controller
 
     public function edit(string $id)
     {
-        $rate = new Rate;
-        if (!$rate->find($id)) {
+        $rate = Rate::query()->find($id);
+        if (!$rate) {
             session(['alert' => __('Тариф не найден!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.rates');
         }
-        $vds = new Vds;
-        $games = new Game;
-        return view('admin.rates.edit', ['rate' => $rate->find($id), 'vds' => $vds->all(), 'games' => $games->all()]);
+        $vds = Vds::query()->get();
+        $games = Game::query()->get();
+        return view('admin.rates.edit', ['rate' => $rate, 'vds' => $vds, 'games' => $games]);
     }
 
     public function update(RateUpdateRequest $request, string $id)
     {
-        $rate = new Rate;
-        if (!$rate->find($id)) {
+        $rate = Rate::query()->find($id);
+        if (!$rate) {
             session(['alert' => __('Тариф не найден'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.rates');
         }
         // нужно написать остаток кода когда доделаю сервера на проверку подключенных серверу услуг что б небыло
         // что человек включил ftp а потом отключили к нему доступ а ftp остался и остальным дополнениям.
-        $rate->where(['id' => $id])->update([
+        $rate->update([
             'name' => $request->name,
             'price' => $request->price,
             'min_s' => $request->min_s,
@@ -92,8 +92,8 @@ class RateController extends Controller
 
     public function destroy(string $id)
     {
-        $rate = new Rate;
-        if (!$rate->find($id)) {
+        $rate = Rate::query()->find($id);
+        if (!$rate) {
             session(['alert' => __('Тариф не найден!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.rates');
@@ -106,7 +106,7 @@ class RateController extends Controller
 
             return redirect()->route('admin.rates');
         }
-        $rate->find($id)->delete();
+        $rate->delete();
 
         session(['alert' => __('Тариф успешно удален!'), 'a_status' => 'success']);
 

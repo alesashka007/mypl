@@ -9,17 +9,24 @@ use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $news = new News;
-        return view('news.index', ['news' => $news->where(['status' => 1])->with('user')->paginate(5)]);
+        $news = News::query()
+            ->where('status', '=', 1)
+            ->with('user')
+            ->paginate(5);
+
+        return view('news.index', ['news' => $news]);
     }
 
-    public function admin_news(Request $request)
+    public function admin_news()
     {
 
-        $news = new News;
-        return view('admin.news.index', ['news' => $news->with('user')->paginate(10)]);
+        $news = News::query()
+            ->with('user')
+            ->paginate(10);
+
+        return view('admin.news.index', ['news' => $news]);
     }
 
     public function create()
@@ -42,24 +49,24 @@ class NewsController extends Controller
 
     public function edit(string $id)
     {
-        $news = new News;
-        if (!$news->find($id)) {
+        $news = News::query()->find($id);
+        if (!$news) {
             session(['alert' => __('Новость не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.news');
         }
-        return view('admin.news.edit', ['news' => $news->find($id)]);
+        return view('admin.news.edit', ['news' => $news]);
     }
 
     public function update(NewsUpdateRequest $request, string $id)
     {
-        $news = new News;
-        if (!$news->find($id)) {
+        $news = News::query()->find($id);
+        if (!$news) {
             session(['alert' => __('Новость не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.news');
         }
-        $news->where(['id' => $id])->update([
+        $news->update([
             'title' => $request->title,
             'text' => $request->text,
             'status' => $request->status,
@@ -71,15 +78,15 @@ class NewsController extends Controller
 
     public function destroy(string $id)
     {
-        $news = new News;
+        $news = News::query()->find($id);
 
-        if(!$news->find($id)){
+        if(!$news){
             session(['alert' => __('Новость не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.news');
         }
 
-        $news->find($id)->delete();
+        $news->delete();
 
         session(['alert' => __('Новость успешно удалена!'), 'a_status' => 'success']);
 
