@@ -65,24 +65,21 @@ class GameController extends Controller
 
     public function destroy(string $id)
     {
-        $game = new Game;
+        $game = Game::query()->find($id);
 
-
-        if(!$game->find($id)){
+        if(!$game){
             session(['alert' => __('Игра не найдена!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.games');
         }
 
-        $objects = 0;
-        $objects = $objects + modelCountEl("Rate", 'game', $id);
-        if($objects > 0){
+        if($game->rates->count() > 0){
             session(['alert' => __('Вы не можете удалить игру так как есть созданые обьекты с привязаным его id!'), 'a_status' => 'danger']);
 
             return redirect()->route('admin.games');
         }
 
-        $game->find($id)->delete();
+        $game->delete();
 
         session(['alert' => __('Игра успешно удалена!'), 'a_status' => 'success']);
 
