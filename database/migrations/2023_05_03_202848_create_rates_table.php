@@ -19,8 +19,12 @@ return new class extends Migration
             $table->decimal('price', 8, 2);
             $table->integer('min_s');
             $table->integer('max_s');
-            $table->integer('game_id');
-            $table->integer('vds_id');
+            $table->foreignId('game_id')
+                ->references('id')
+                ->on('games');
+            $table->foreignId('vds_id')
+                ->references('id')
+                ->on('vds');
             $table->integer('quota');
             $table->integer('tick');
             $table->boolean('tv');

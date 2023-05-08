@@ -16,8 +16,12 @@ return new class extends Migration {
             $table->string('name')->nullable();
             $table->integer('status')->default(3);
 
-            $table->integer('rate_id');
-            $table->integer('user_id');
+            $table->foreignId('rate_id')
+                ->references('id')
+                ->on('rates');
+            $table->foreignId('user_id')
+                ->references('id')
+                ->on('users');
 
             $table->integer('port');
             $table->integer('slots');
